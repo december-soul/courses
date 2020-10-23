@@ -4,18 +4,18 @@ import json
 import os
 
 
-# image has 8192*8192 pixel
 def coordinateToPixel(x, y, im_x, im_y):
     # scale coordinate to imagesize
-    # set 0,0 to the center of the image
-    # set offset to fix image to coordinate
-    # todo: this don't fix, find better parameters
-    scale = 12500
-    offset_x = -500
-    offset_y = 2200
-    z_x = im_x / 2 * scale / im_x + offset_x
-    z_y = im_y / 2 * scale / im_y + offset_y
-    return (z_x + x) * im_x / scale, (z_y - y) * im_y / scale
+    scale_x =  10000 / im_x
+    scale_y =  -12000 / im_y
+    offset_x = 2640
+    offset_y = 5284
+
+    z_x = x / scale_x + offset_x
+    z_y = y / scale_y + offset_y
+    #print("y={} im_y={} scale_y={} offset_y={} z_y={} ".format(y, im_y, scale_y, offset_y, z_y) )
+    #print("x={} im_x={} scale_x={} offset_x={} z_x={} ".format(x, im_x, scale_x, offset_x, z_x) )
+    return z_x, z_y
 
 
 with Image.open("grand-theft-auto-v_karte-satellit_hq.jpg") as im:
@@ -33,7 +33,7 @@ with Image.open("grand-theft-auto-v_karte-satellit_hq.jpg") as im:
                     start_y = 0
                     color = (randrange(0, 255), randrange(0, 255), randrange(0, 255))
                     for p in data['WayPointList']:
-                        (x, y) = coordinateToPixel(p["X"], p["Y"], im.size[0], im.size[0])
+                        (x, y) = coordinateToPixel(p["X"], p["Y"], im.size[0], im.size[1])
                         print("  x={} y={}".format(x, y))
                         draw.rectangle((x, y, x + 20, y + 20), fill=color, outline=(255, 0, 255))
                         if old_x != 0:
